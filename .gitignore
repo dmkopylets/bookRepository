@@ -1,0 +1,23 @@
+/.dockerignore
+/.idea
+#/docker/db/data/
+/docker/logs/nginx/localhost_error.log
+/docker/logs/nginx/localhost_access.log
+/docker/logs/nginx/error.log
+
+/_ide_helper.php
+
+###> squizlabs/php_codesniffer ###
+/app/.phpcs-cache
+/app/phpcs.xml
+/app/phpcs.xml.dist
+###< squizlabs/php_codesniffer ###
+
+###> friendsofphp/php-cs-fixer ###
+/app/.php-cs-fixer.dist.php
+/app/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+/app/.editorconfig
+
+
+
