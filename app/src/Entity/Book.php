@@ -24,9 +24,9 @@ class Book
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(inversedBy: 'books')]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Category $category = null;
+    private Category $category;
 
     /**
      * @var Collection<int, Tag>
@@ -73,7 +73,7 @@ class Book
         return $this->category;
     }
 
-    public function setCategoryId(?Category $category): static
+    public function setCategoryId(?Category $category): self
     {
         $this->category = $category;
 
