@@ -58,6 +58,3 @@ nginx-restart:
 
 swagger-generate:
 	$(EXEC_PHP) sh -c "./vendor/bin/openapi /var/www/src -o /var/www/api/openApi/swagger.json"
-
-jwt-ssl-key-generate:
-	$(EXEC_PHP) sh -c " php bin/console lexik:jwt:generate-keypair --skip-if-exists"
