@@ -15,9 +15,6 @@ class BookController extends AbstractController
     #[Route('/books', name: 'book_index', methods:['get'])]
     public function index(EntityManagerInterface $entityManager): JsonResponse
     {
-//        return $this->render('book/index.html.twig', [
-//            'controller_name' => 'BookController',
-//        ]);
         $books = $entityManager
             ->getRepository(Book::class)
             ->findAll();
@@ -27,8 +24,10 @@ class BookController extends AbstractController
         foreach ($books as $book) {
             $data[] = [
                 'id' => $book->getId(),
+                'category' => $book->getCategoryTitle,
                 'title' => $book->getTitle(),
                 'description' => $book->getDescription(),
+                'tags' => $book->getTagsAsString(),
             ];
         }
 

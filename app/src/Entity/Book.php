@@ -68,12 +68,17 @@ class Book
         return $this;
     }
 
-    public function getCategoryId(): ?Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
 
-    public function setCategoryId(?Category $category): self
+    public function getCategoryTitle(): ?string
+    {
+        return $this->category->getTitle();
+    }
+
+    public function setCategory(?Category $category): self
     {
         $this->category = $category;
 
@@ -86,6 +91,18 @@ class Book
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    public function getTagsAsString(): string
+    {
+        $tagNames = '';
+        $tags = $this->tags;
+        if ($tags->count() > 0) {
+            $tagNames = implode(', ', $tags->map(function (Tag $tag) {
+                return $tag->getTitle();
+            })->toArray());
+        }
+        return $tagNames;
     }
 
     public function addTag(Tag $tag): static
