@@ -1,7 +1,7 @@
 FROM php:8.3-fpm-alpine AS php_fpm_alpine
 MAINTAINER uncle.dima <dm.kopylets@gmail.com>
 LABEL mainterner="uncle.dima <dm.kopylets@gmail.com>"
-LABEL description="Alpine based image with php8.2-fpm"
+LABEL description="Alpine based image with php8.3-fpm"
 
 ENV COMPOSER_MEMORY_LIMIT='-1'
 ENV TZ="Europe/Kiev"
@@ -43,10 +43,6 @@ RUN docker-php-ext-enable apcu pdo_pgsql sodium
 
 RUN apk add --update linux-headers
 
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash
-
-RUN apk add symfony-cli
-
 #RUN pecl install xdebug  && docker-php-ext-enable xdebug
 
 #COPY ./docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -60,15 +56,25 @@ RUN apk --no-cache add shadow && \
     groupmod -o -g ${PGID} www-data && \
     usermod -o -u ${PUID} -g www-data www-data
 
-# Copy existing application directory contents
-#COPY ./ /var/www
+RUN chown -R www-data:www-data /var/www && chmod 755 /var/www
+
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash
+
+RUN apk add symfony-cli
+
 WORKDIR /var/www
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+#####################################
+# Composer:
+#####################################
+
+RUN curl -s http://getcomposer.org/installer | php && \
+    echo "export PATH=${PATH}:/var/www/vendor/bin" >> ~/.bashrc && \
+    mv composer.phar /usr/local/bin/composer
 
 # Change current user to www-data
 USER www-data
 
-CMD php-fpm
-
 EXPOSE 9000
+
+CMD ["php-fpm"]

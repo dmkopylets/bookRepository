@@ -47,3 +47,5 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    extra_hosts:
+      - host.docker.internal:${HOST_IP:-172.17.0.1}
