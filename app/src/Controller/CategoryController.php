@@ -17,18 +17,12 @@ class CategoryController extends AbstractController
     {
         $categories = $entityManager
             ->getRepository(Category::class)
-            ->findAll();
+            ->createQueryBuilder('c')
+            ->select('c.id, c.title')
+            ->getQuery()
+            ->getArrayResult();
 
-        $data = [];
-
-        foreach ($categories as $category) {
-            $data[] = [
-                'id' => $category->getId(),
-                'title' => $category->getTitle(),
-            ];
-        }
-
-        return $this->json($data);
+        return $this->json($categories);
     }
 
     #[Route('/categories', name: 'category_create', methods:['post'] )]

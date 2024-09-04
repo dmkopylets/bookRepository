@@ -17,18 +17,12 @@ class TagController extends AbstractController
     {
         $tags = $entityManager
             ->getRepository(Tag::class)
-            ->findAll();
+            ->createQueryBuilder('t')
+            ->select('t.id, t.title')
+            ->getQuery()
+            ->getArrayResult();
 
-        $data = [];
-
-        foreach ($tags as $tag) {
-            $data[] = [
-                'id' => $tag->getId(),
-                'title' => $tag->getTitle(),
-            ];
-        }
-
-        return $this->json($data);
+        return $this->json($tags);
     }
 
     #[Route('/tags', name: 'tag_create', methods:['post'] )]
