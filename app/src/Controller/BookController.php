@@ -8,20 +8,30 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Book;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/api', name: 'api_')]
 class BookController extends AbstractController
 {
     #[Route('/books', name: 'book_index', methods:['get'])]
-    public function index(EntityManagerInterface $entityManager): JsonResponse
+    public function index(EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): JsonResponse
     {
-        $books = $entityManager
+        $booksQuery = $entityManager
             ->getRepository(Book::class)
-            ->findAll();
+            ->createQueryBuilder('b')
+            ->getQuery();
+
+        $page = $request->query->getInt('page', 1);
+
+        $pagination = $paginator->paginate(
+            $booksQuery,
+            $page,
+            5 /* кількість елементів на сторінці */
+        );
 
         $data = [];
 
-        foreach ($books as $book) {
+        foreach ($pagination as $book) {
             $data[] = [
                 'id' => $book->getId(),
                 'category' => $book->getCategoryTitle,
