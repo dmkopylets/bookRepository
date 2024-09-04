@@ -19,29 +19,15 @@ class BookController extends AbstractController
         $booksQuery = $entityManager
             ->getRepository(Book::class)
             ->createQueryBuilder('b')
-            ->getQuery();
+            ->select('b.id, b.categoryTitle, b.title, b.description, b.tagsAsString')
+            ->getQuery()
+            ->getArrayResult();
 
         $page = $request->query->getInt('page', 1);
 
-        $pagination = $paginator->paginate(
-            $booksQuery,
-            $page,
-            5 /* кількість елементів на сторінці */
-        );
-dd($pagination);
-        $data = [];
+        $bookList = $paginator->paginate($booksQuery, $page, 5);
 
-        foreach ($pagination as $book) {
-            $data[] = [
-                'id' => $book->getId(),
-                'category' => $book->getCategoryTitle,
-                'title' => $book->getTitle(),
-                'description' => $book->getDescription(),
-                'tags' => $book->getTagsAsString(),
-            ];
-        }
-
-        return $this->json($data);
+        return $this->json($bookList);
     }
 
     #[Route('/books', name: 'book_create', methods:['post'] )]
