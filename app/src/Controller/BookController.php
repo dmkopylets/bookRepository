@@ -28,7 +28,7 @@ class BookController extends AbstractController
             $page,
             5 /* кількість елементів на сторінці */
         );
-
+dd($pagination);
         $data = [];
 
         foreach ($pagination as $book) {
@@ -62,7 +62,6 @@ class BookController extends AbstractController
 
         return $this->json($data);
     }
-
 
     #[Route('/books/{id}', name: 'book_show', methods:['get'] )]
     public function show(EntityManagerInterface $entityManager, int $id): JsonResponse
