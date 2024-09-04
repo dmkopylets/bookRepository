@@ -18,6 +18,9 @@ class Book
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column]
+    private ?int $category_id = null;
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -25,7 +28,7 @@ class Book
     private ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'books')]
-    #[ORM\JoinColumn(nullable: false)]
+//    #[ORM\JoinColumn(nullable: false)]
     private Category $category;
 
     /**
@@ -42,6 +45,25 @@ class Book
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function getCategoryId(): ?int
+    {
+        return $this->category_id;
+    }
+
+    public function setCategoryId(int $category_id): static
+    {
+        $this->category_id = $category_id;
+
+        return $this;
     }
 
     public function getTitle(): ?string
@@ -68,21 +90,9 @@ class Book
         return $this;
     }
 
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
     public function getCategoryTitle(): ?string
     {
         return $this->category->getTitle();
-    }
-
-    public function setCategory(?Category $category): self
-    {
-        $this->category = $category;
-
-        return $this;
     }
 
     /**

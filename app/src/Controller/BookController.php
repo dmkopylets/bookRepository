@@ -2,106 +2,102 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Book;
+//use App\Form\BookType;
+use App\Repository\BookRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api', name: 'api_')]
+#[Route('/book')]
 class BookController extends AbstractController
 {
-    #[Route('/books', name: 'book_index', methods:['get'])]
-    public function index(EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): JsonResponse
+    #[Route(name: 'app_book_index', methods: ['GET'])]
+    public function index(EntityManagerInterface $entityManager, BookRepository $bookRepository, PaginatorInterface $paginator, Request $request): Response
     {
+//        $booksQuery = $bookRepository->createQueryBuilder('b')
+//            ->select('b.id, b.category_id, b.title, b.description, b.tagsAsString');
+
+
+//        $booksQuery = $bookRepository->createQueryBuilder('b');
+
         $booksQuery = $entityManager
             ->getRepository(Book::class)
             ->createQueryBuilder('b')
-            ->select('b.id, b.categoryTitle, b.title, b.description, b.tagsAsString')
+            ->select('b.id, b.category_id, b.title, b.description')
             ->getQuery()
             ->getArrayResult();
 
         $page = $request->query->getInt('page', 1);
 
-        $bookList = $paginator->paginate($booksQuery, $page, 5);
+        $pagination = $paginator->paginate(
+            $booksQuery,
+            $page,
+            5
+        );
 
-        return $this->json($bookList);
+        return $this->render('book/index.html.twig', [
+            'pagination' => $pagination,
+        ]);
     }
 
-    #[Route('/books', name: 'book_create', methods:['post'] )]
-    public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    #[Route('/new', name: 'app_book_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $book = new Book();
-        $book->setTitle($request->request->get('title'));
-        $book->setDescription($request->request->get('description'));
+        $form = $this->createForm(BookType::class, $book);
+        $form->handleRequest($request);
 
-        $entityManager->persist($book);
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($book);
+            $entityManager->flush();
 
-        $data =  [
-            'id' => $book->getId(),
-            'title' => $book->getTitle(),
-            'description' => $book->getDescription(),
-        ];
-
-        return $this->json($data);
-    }
-
-    #[Route('/books/{id}', name: 'book_show', methods:['get'] )]
-    public function show(EntityManagerInterface $entityManager, int $id): JsonResponse
-    {
-        $book = $entityManager->getRepository(Book::class)->find($id);
-
-        if (!$book) {
-
-            return $this->json('No book found for id ' . $id, 404);
+            return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $data =  [
-            'id' => $book->getId(),
-            'title' => $book->getTitle(),
-            'description' => $book->getDescription(),
-        ];
-
-        return $this->json($data);
+        return $this->render('book/new.html.twig', [
+            'book' => $book,
+            'form' => $form,
+        ]);
     }
 
-    #[Route('/books/{id}', name: 'book_update', methods:['put', 'patch'] )]
-    public function update(EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
+    #[Route('/{id}', name: 'app_book_show', methods: ['GET'])]
+    public function show(Book $book): Response
     {
-        $book = $entityManager->getRepository(Book::class)->find($id);
-
-        if (!$book) {
-            return $this->json('No book found for id ' . $id, 404);
-        }
-
-        $book->setName($request->request->get('title'));
-        $book->setDescription($request->request->get('description'));
-        $entityManager->flush();
-
-        $data =  [
-            'id' => $book->getId(),
-            'title' => $book->getName(),
-            'description' => $book->getDescription(),
-        ];
-
-        return $this->json($data);
+        return $this->render('book/show.html.twig', [
+            'book' => $book,
+        ]);
     }
 
-    #[Route('/books/{id}', name: 'book_delete', methods:['delete'] )]
-    public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse
+    #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
-        $book = $entityManager->getRepository(Book::class)->find($id);
+        $form = $this->createForm(BookType::class, $book);
+        $form->handleRequest($request);
 
-        if (!$book) {
-            return $this->json('No book found for id ' . $id, 404);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $entityManager->remove($book);
-        $entityManager->flush();
+        return $this->render('book/edit.html.twig', [
+            'book' => $book,
+            'form' => $form,
+        ]);
+    }
 
-        return $this->json('Deleted a book successfully with id ' . $id);
+    #[Route('/{id}', name: 'app_book_delete', methods: ['POST'])]
+    public function delete(Request $request, Book $book, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$book->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($book);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
     }
 }
