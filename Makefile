@@ -36,7 +36,7 @@ composer-i:
 	$(EXEC_PHP) sh -c " composer install"
 
 clear-cache:
-	$(EXEC_PHP) bash -c " rm -rf backend/var"
+	$(EXEC_PHP) bash -c " rm -rf app/var"
 
 migrate:
 	$(EXEC_PHP) sh -c " php bin/console doctrine:migrations:migrate --no-interaction"

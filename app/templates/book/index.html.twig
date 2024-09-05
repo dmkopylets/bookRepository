@@ -12,6 +12,7 @@
                 <th>Category</th>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Tags</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -22,6 +23,7 @@
                 <td>{{ book.categoryTitle}}</td>
                 <td>{{ book.title }}</td>
                 <td>{{ book.description }}</td>
+                <td>{{ book.tags }}</td>
                 <td>
                     <a href="{{ path('app_book_show', {'id': book.id}) }}">show</a>
                     <a href="{{ path('app_book_edit', {'id': book.id}) }}">edit</a>

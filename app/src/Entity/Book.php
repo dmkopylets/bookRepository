@@ -84,10 +84,7 @@ class Book
         return $this;
     }
 
-    public function getCategoryTitle(): ?string
-    {
-        return $this->category->getTitle();
-    }
+
 
     /**
      * @return Collection<int, Tag>
@@ -107,6 +104,11 @@ class Book
             })->toArray());
         }
         return $tagNames;
+    }
+
+    public function getCategoryTitle(): ?string
+    {
+        return $this->category->getTitle();
     }
 
     public function addTag(Tag $tag): static

@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Book;
-//use App\Form\BookType;
-use App\Repository\BookRepository;
+use App\Form\BookType;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,25 +14,16 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/book')]
 class BookController extends AbstractController
 {
-    #[Route(name: 'app_book_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager, BookRepository $bookRepository, PaginatorInterface $paginator, Request $request): Response
+    #[Route(name: 'app_book_index', methods: ['get'])]
+    public function index(EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
     {
-//        $booksQuery = $bookRepository->createQueryBuilder('b')
-//            ->select('b.id, b.category_id, b.title, b.description, b.tagsAsString');
-
-
-//        $booksQuery = $bookRepository->createQueryBuilder('b');
-
         $booksQuery = $entityManager
             ->getRepository(Book::class)
             ->createQueryBuilder('b')
             ->select('b.id, c.title AS categoryTitle, b.title, b.description')
             ->leftJoin('b.category', 'c')
-//            ->leftJoin('b.book_tag', 'bt')
-            ->leftJoin('b.tags', 't')
-            ->groupBy('b.id')
-            ->getQuery()
-            ->getArrayResult();
+            ->groupBy('b.id, c.title')
+            ->getQuery();
 
         $page = $request->query->getInt('page', 1);
 
@@ -43,8 +33,17 @@ class BookController extends AbstractController
             5
         );
 
+        $paginatedBooksData = [];
+        foreach ($pagination->getItems() as $book) {
+            $bookEntity = $entityManager->getRepository(Book::class)->find($book['id']);
+            $book['tags'] = $bookEntity->getTagsAsString();
+            $paginatedBooksData[] = $book;
+        }
+
+dd( $paginatedBooksData);
+
         return $this->render('book/index.html.twig', [
-            'pagination' => $pagination,
+            'pagination' => $paginatedBooksData,
         ]);
     }
 
