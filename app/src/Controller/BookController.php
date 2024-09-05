@@ -27,7 +27,11 @@ class BookController extends AbstractController
         $booksQuery = $entityManager
             ->getRepository(Book::class)
             ->createQueryBuilder('b')
-            ->select('b.id, b.category_id, b.title, b.description')
+            ->select('b.id, c.title AS categoryTitle, b.title, b.description')
+            ->leftJoin('b.category', 'c')
+//            ->leftJoin('b.book_tag', 'bt')
+            ->leftJoin('b.tags', 't')
+            ->groupBy('b.id')
             ->getQuery()
             ->getArrayResult();
 

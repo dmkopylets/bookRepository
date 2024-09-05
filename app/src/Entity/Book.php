@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 #[ApiResource(paginationEnabled: true)]
@@ -28,7 +29,7 @@ class Book
     private ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'books')]
-//    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['book:list', 'book:list:write'])]
     private Category $category;
 
     /**
@@ -47,23 +48,16 @@ class Book
         return $this->id;
     }
 
-    public function setCategory(?Category $category): self
+    public function setCategoryId(?Category $category): self
     {
         $this->category = $category;
 
         return $this;
     }
 
-    public function getCategoryId(): ?int
+    public function getCategoryId(): ?Category
     {
-        return $this->category_id;
-    }
-
-    public function setCategoryId(int $category_id): static
-    {
-        $this->category_id = $category_id;
-
-        return $this;
+        return $this->category;
     }
 
     public function getTitle(): ?string
