@@ -26,24 +26,18 @@ class BookController extends AbstractController
             ->getQuery();
 
         $page = $request->query->getInt('page', 1);
+        $pagination = $paginator->paginate($booksQuery, $page, 5);
 
-        $pagination = $paginator->paginate(
-            $booksQuery,
-            $page,
-            5
-        );
-
-        $paginatedBooksData = [];
+        $temporaryData = [];
         foreach ($pagination->getItems() as $book) {
             $bookEntity = $entityManager->getRepository(Book::class)->find($book['id']);
             $book['tags'] = $bookEntity->getTagsAsString();
-            $paginatedBooksData[] = $book;
+            $temporaryData[] = $book;
         }
-
-dd( $paginatedBooksData);
+        $pagination->setItems($temporaryData);
 
         return $this->render('book/index.html.twig', [
-            'pagination' => $paginatedBooksData,
+            'pagination' => $pagination,
         ]);
     }
 

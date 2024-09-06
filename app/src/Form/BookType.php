@@ -19,11 +19,11 @@ class BookType extends AbstractType
             ->add('description')
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-'choice_label' => 'id',
+'choice_label' => 'title',
             ])
             ->add('tags', EntityType::class, [
                 'class' => Tag::class,
-'choice_label' => 'id',
+'choice_label' => 'title',
 'multiple' => true,
             ])
         ;

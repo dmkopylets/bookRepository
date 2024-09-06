@@ -48,14 +48,14 @@ class Book
         return $this->id;
     }
 
-    public function setCategoryId(?Category $category): self
+    public function setCategory(?Category $category): self
     {
         $this->category = $category;
 
         return $this;
     }
 
-    public function getCategoryId(): ?Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -83,8 +83,6 @@ class Book
 
         return $this;
     }
-
-
 
     /**
      * @return Collection<int, Tag>
