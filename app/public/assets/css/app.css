@@ -1,5 +1,16 @@
 body {
     background-color: lightgray;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+a {
+    text-decoration: none;
+}
+
+main {
+    flex: 1;
 }
 
 .container {
