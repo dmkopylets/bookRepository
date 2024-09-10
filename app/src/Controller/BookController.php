@@ -46,7 +46,12 @@ class BookController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $book = new Book();
-        $form = $this->createForm(BookType::class, $book);
+        $tags = $book->getTags();
+        $form = $this->createForm(BookType::class, $book, [
+            'choices' => array_map(function (Tag $tag) {
+                return $tag->getTitle();
+            }, $tags),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

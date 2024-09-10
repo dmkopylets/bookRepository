@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Book;
 use App\Entity\Category;
 use App\Entity\Tag;
+use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -18,9 +19,10 @@ use App\Form\TagsTransformer;
 
 class BookType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options, EntityManagerInterface $entityManager): void
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $tagRepository = $entityManager->getRepository(Tag::class);
+        $tagRepository = new TagRepository();
         $tags = $tagRepository->findAll();
         $builder
             ->add('title', TextType::class, [
@@ -57,6 +59,37 @@ class BookType extends AbstractType
             ])
         ;
     }
+
+
+//    css
+//
+//.scrollable-checkboxes {
+//height: 150px;
+//overflow-y: scroll;
+//border: 1px solid #595572;
+//padding: 10px;
+//background-color: transparent;
+//border-radius: 0.375rem;
+//}
+//
+//.scrollable-checkboxes input {
+//    margin-right: 10px;
+
+
+
+//->add('options', ChoiceType::class, [
+//'choices' => $this->payWaysService->getCashinoutSpbBanks(),
+//'multiple' => true,
+//'expanded' => true,
+//'label' => 'Select Banks',
+//'attr' => [
+//'class' => 'scrollable-checkboxes',
+//],
+//])->add('type', HiddenType::class, [
+//'empty_data' => 'select',
+//'data' => 'select'
+//]);
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {
