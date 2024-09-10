@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Entity\Tag;
 use App\Form\BookType;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -72,7 +73,14 @@ class BookController extends AbstractController
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(BookType::class, $book);
+        $tagRepository = $entityManager->getRepository(Tag::class);
+        $tags = $tagRepository->findAll();
+
+        $form = $this->createForm(BookType::class, $book, [
+            'choices' => array_map(function (Tag $tag) {
+                return $tag->getTitle();
+            }, $tags),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
