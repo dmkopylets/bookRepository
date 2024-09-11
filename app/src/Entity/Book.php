@@ -7,6 +7,7 @@ use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -37,10 +38,12 @@ class Book
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'books')]
     private Collection $tags;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct()
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->tags = new ArrayCollection();
+        $this->entityManager = $entityManager;
     }
 
     public function getId(): ?int
@@ -109,12 +112,14 @@ class Book
         return $this->category->getTitle();
     }
 
-    public function addTag(Tag $tag): static
+    public function addTag(Tag $tag): self
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
             $tag->addBook($this);
         }
+
+        $this->entityManager->flush();
 
         return $this;
     }
@@ -124,6 +129,8 @@ class Book
         if ($this->tags->removeElement($tag)) {
             $tag->removeBook($this);
         }
+
+        $this->entityManager->flush();
 
         return $this;
     }

@@ -34,19 +34,15 @@ class BookType extends AbstractType
             ->add('tags', EntityType::class, [
                 'class' => Tag::class,
                 'label' => 'Select Tags',
-//                'choices' => Tag::class,
-//                'choices' => array_map(function (Tag $tag) {
-//                    return $tag->getTitle();
-//                }, $tags),
                 'choice_label' => 'title',
                 'multiple' => true,
                 'expanded' => true,
             ])
-            ->add('save', SubmitType::class, [
-                'attr' => [
-                    'class' => 'btn btn-outline-primary mt-4'
-                ]
-            ])
+//            ->add('save', SubmitType::class, [
+//                'attr' => [
+//                    'class' => 'btn btn-outline-primary mt-4'
+//                ]
+//            ])
         ;
     }
 
