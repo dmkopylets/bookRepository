@@ -44,11 +44,15 @@ class BookController extends AbstractController
     #[Route('/new', name: 'app_book_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $book = new Book();
+        $book = new Book($entityManager);
         $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $tags = $form->get('tags')->getData();
+            foreach ($tags as $tag) {
+                $book->addTag($tag);
+            }
             $entityManager->persist($book);
             $entityManager->flush();
 
@@ -76,6 +80,12 @@ class BookController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $book->getTags()->clear();
+            $tags = $form->get('tags')->getData();
+            foreach ($tags as $tag) {
+                $book->addTag($tag);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
