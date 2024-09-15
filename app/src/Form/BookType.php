@@ -13,6 +13,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 
 class BookType extends AbstractType
 {
@@ -24,10 +26,17 @@ class BookType extends AbstractType
         $this->entityManager = $entityManager;
     }
 
-public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $tags = $options['data']->getTags()->toArray();
-        $entityManager = $options['entity_manager'];
+        $choices = [];
+        foreach ($options['tags'] as $tag) {
+            $choices[$tag->getTitle()] = $tag->getId();
+//            $choices[$tag->getTitle()] = ['id' => $tag->getId(), 'title' => $tag->getTitle()];
+//            $choices[] = ['id' => $tag->getId(), 'title' => $tag->getTitle()];
+        }
+
+        dd($choices);
+
 
         $builder
             ->add('title', TextType::class, [
@@ -43,25 +52,51 @@ public function buildForm(FormBuilderInterface $builder, array $options): void
                 'class' => Category::class,
                 'choice_label' => 'title',
             ])
-            ->add('tags', EntityType::class, [
-                'class' => Tag::class,
+//            ->add('tags', EntityType::class, [
+//                'class' => Tag::class,
+            ->add('tags', ChoiceType::class, [
+                'choices' => $choices,
                 'label' => 'Select Tags',
                 'choice_label' => 'title',
                 'multiple' => true,
-//                'expanded' => true,
+                'expanded' => false,  // Виводимо у вигляді select
+                'autocomplete' => true,
                 'attr' => [
                     'class' => 'custom-select-multiple',
                     'size' => 6,
                     'style' => 'overflow-y: scroll;',
-                    ],
+                ],
             ]);
     }
+
+//        $builder->addEventListener(
+//            FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+//            $form = $event->getForm();
+//
+//            //$tags = $form->getParent()->getParent()->getData();
+//            $tags = $form->get('tags')->getData();
+//
+//            if ($tags) {
+//                $parameters = json_decode($tags->getParameters(), true);
+
+//                $bankFormData = $parameters['form']['spb-banks'] ?? null;
+
+//                if ($bankFormData) {
+//                    $event->setData([
+//                        'label' => $bankFormData['label'],
+//                        'options' => array_values($bankFormData['options'])
+//                    ]);
+
+//            }
+//        });
+//    }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Book::class,
-            'entity_manager' => null,
+//            'entity_manager' => null,
             'tags' => [],
         ]);
     }

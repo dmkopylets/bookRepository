@@ -3,6 +3,7 @@
 namespace App\Controller\Frontend;
 
 use App\Entity\Book;
+use App\Entity\Tag;
 use App\Form\BookType;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -84,25 +85,30 @@ class BookController extends AbstractController
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
-
-        $form = $this->createForm(BookType::class, $book);
+        $tags = $entityManager->getRepository(Tag::class)->findAll() ;
+        $form = $this->createForm(BookType::class, $book, ['tags' => $tags, ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $book->getTags()->clear();
-            $tags = $form->get('tags')->getData();
-            foreach ($tags as $tag) {
-                $book->addTag($tag);
+
+            $selectedTagIds = $form->get('tags')->getData();
+            foreach ($selectedTagIds as $tagId) {
+                $tag = $entityManager->getRepository(Tag::class)->find($tagId);
+                if ($tag) {
+                    $book->addTag($tag);
+                }
             }
 
             $entityManager->flush();
 
             return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
+            //return $this->redirectToRoute('app_book_show', ['id' => $book->getId()]);
         }
 
         return $this->render('book/edit.html.twig', [
             'book' => $book,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
