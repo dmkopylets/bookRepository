@@ -17,3 +17,41 @@ main {
 .container {
     max-width: 72rem;
 }
+
+.custom-select-multiple {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.custom-select-multiple option {
+    padding-left: 25px;
+    position: relative;
+}
+
+.custom-select-multiple option::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border: 1px solid #ccc;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 3px;
+}
+
+.custom-select-multiple option:checked::before {
+    content: '\2713'; /* Галочка (✓) */
+    color: green;
+    font-size: 18px;
+    line-height: 18px;
+    text-align: center;
+    background-color: white;
+}

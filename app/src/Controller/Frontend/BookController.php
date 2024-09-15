@@ -14,6 +14,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/book')]
 class BookController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     #[Route(name: 'app_book_index', methods: ['get'])]
     public function index(EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
     {
@@ -45,6 +52,7 @@ class BookController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $book = new Book($entityManager);
+//        $options['data']['entity_manager'] = $entityManager;
         $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
 
@@ -76,7 +84,11 @@ class BookController extends AbstractController
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(BookType::class, $book);
+        $tags = $book->getTagsArray();
+        $form = $this->createForm(BookType::class, $book, [
+            'entity_manager' => $entityManager,
+            'tags' => $tags,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

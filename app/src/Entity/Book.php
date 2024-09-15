@@ -42,8 +42,8 @@ class Book
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->tags = new ArrayCollection();
         $this->entityManager = $entityManager;
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,6 +93,11 @@ class Book
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    public function getTagsArray(): array
+    {
+        return $this->tags->toArray();
     }
 
     public function getTagsAsString(): string

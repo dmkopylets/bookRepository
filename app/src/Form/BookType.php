@@ -7,16 +7,28 @@ use App\Entity\Category;
 use App\Entity\Tag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Doctrine\ORM\EntityManagerInterface;
 
 class BookType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+
     {
+        $this->entityManager = $entityManager;
+    }
+
+public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $tags = $options['data']->getTags()->toArray();
+        $entityManager = $options['entity_manager'];
+
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Назва',
@@ -36,20 +48,21 @@ class BookType extends AbstractType
                 'label' => 'Select Tags',
                 'choice_label' => 'title',
                 'multiple' => true,
-                'expanded' => true,
-            ])
-//            ->add('save', SubmitType::class, [
-//                'attr' => [
-//                    'class' => 'btn btn-outline-primary mt-4'
-//                ]
-//            ])
-        ;
+//                'expanded' => true,
+                'attr' => [
+                    'class' => 'custom-select-multiple',
+                    'size' => 6,
+                    'style' => 'overflow-y: scroll;',
+                    ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Book::class,
+            'entity_manager' => null,
+            'tags' => [],
         ]);
     }
 }
