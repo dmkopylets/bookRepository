@@ -42,11 +42,6 @@ class BookType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
             ])
-            ->add('save', SubmitType::class, [
-                'attr' => [
-                    'class' => 'btn btn-outline-primary mt-4'
-                ]
-            ])
         ;
     }
 
