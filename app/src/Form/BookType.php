@@ -7,14 +7,14 @@ use App\Entity\Category;
 use App\Entity\Tag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+// use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormEvent;
+//use Symfony\Component\Form\FormEvents;
+//use Symfony\Component\Form\FormEvent;
 
 class BookType extends AbstractType
 {
@@ -28,15 +28,12 @@ class BookType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $choices = [];
-        foreach ($options['tags'] as $tag) {
-            $choices[$tag->getTitle()] = $tag->getId();
+//        $choices = [];
+//        foreach ($options['tags'] as $tag) {
+//            $choices[$tag->getTitle()] = $tag->getId();
 //            $choices[$tag->getTitle()] = ['id' => $tag->getId(), 'title' => $tag->getTitle()];
 //            $choices[] = ['id' => $tag->getId(), 'title' => $tag->getTitle()];
-        }
-
-        dd($choices);
-
+   //     }
 
         $builder
             ->add('title', TextType::class, [
@@ -52,10 +49,10 @@ class BookType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'title',
             ])
-//            ->add('tags', EntityType::class, [
-//                'class' => Tag::class,
-            ->add('tags', ChoiceType::class, [
-                'choices' => $choices,
+            ->add('tags', EntityType::class, [
+                'class' => Tag::class,
+//            ->add('tags', ChoiceType::class, [
+//            'choices' => $choices,  // Масив 'Назва' => 'ID'
                 'label' => 'Select Tags',
                 'choice_label' => 'title',
                 'multiple' => true,

@@ -15,14 +15,14 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/book')]
 class BookController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
+//    private EntityManagerInterface $entityManager;
+//
+//    public function __construct(EntityManagerInterface $entityManager)
+//    {
+//        $this->entityManager = $entityManager;
+//    }
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    #[Route(name: 'app_book_index', methods: ['get'])]
+    #[Route(path: '/', name: 'app_book_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
     {
         $booksQuery = $entityManager
@@ -53,7 +53,6 @@ class BookController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $book = new Book($entityManager);
-//        $options['data']['entity_manager'] = $entityManager;
         $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
 
@@ -85,8 +84,7 @@ class BookController extends AbstractController
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
-        $tags = $entityManager->getRepository(Tag::class)->findAll() ;
-        $form = $this->createForm(BookType::class, $book, ['tags' => $tags, ]);
+        $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
