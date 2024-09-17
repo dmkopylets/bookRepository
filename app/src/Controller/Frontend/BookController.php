@@ -84,7 +84,9 @@ class BookController extends AbstractController
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(BookType::class, $book);
+        $tags = $entityManager->getRepository(Tag::class)->findAll();
+
+        $form = $this->createForm(BookType::class, $book, [ 'tags' => $tags, ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

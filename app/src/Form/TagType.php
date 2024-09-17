@@ -17,8 +17,8 @@ class TagType extends AbstractType
             ->add('title')
             ->add('books', EntityType::class, [
                 'class' => Book::class,
-'choice_label' => 'id',
-'multiple' => true,
+                'choice_label' => 'id',
+                'multiple' => true,
             ])
         ;
     }

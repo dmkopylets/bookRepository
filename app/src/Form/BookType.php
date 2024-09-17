@@ -7,33 +7,31 @@ use App\Entity\Category;
 use App\Entity\Tag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-// use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\DataTransformer\TagsToIdsTransformer;
 //use Symfony\Component\Form\FormEvents;
 //use Symfony\Component\Form\FormEvent;
 
 class BookType extends AbstractType
 {
+
     private EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
-
     {
         $this->entityManager = $entityManager;
     }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-//        $choices = [];
-//        foreach ($options['tags'] as $tag) {
-//            $choices[$tag->getTitle()] = $tag->getId();
-//            $choices[$tag->getTitle()] = ['id' => $tag->getId(), 'title' => $tag->getTitle()];
-//            $choices[] = ['id' => $tag->getId(), 'title' => $tag->getTitle()];
-   //     }
+        $tagsArray = [];
+        foreach ($options['tags'] as $tag) {
+            $tagsArray[$tag->getTitle()] = $tag->getId();
+        }
 
         $builder
             ->add('title', TextType::class, [
@@ -49,12 +47,10 @@ class BookType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'title',
             ])
-            ->add('tags', EntityType::class, [
-                'class' => Tag::class,
-//            ->add('tags', ChoiceType::class, [
-//            'choices' => $choices,  // Масив 'Назва' => 'ID'
+            ->add('tags', ChoiceType::class, [
+                'choices' => $tagsArray,  // Масив 'Назва' => 'ID'
                 'label' => 'Select Tags',
-                'choice_label' => 'title',
+//                'choice_label' => 'title',
                 'multiple' => true,
                 'expanded' => false,  // Виводимо у вигляді select
                 'autocomplete' => true,
@@ -64,6 +60,8 @@ class BookType extends AbstractType
                     'style' => 'overflow-y: scroll;',
                 ],
             ]);
+        $builder->get('tags')->addModelTransformer(new TagsToIdsTransformer($this->entityManager));
+
     }
 
 //        $builder->addEventListener(
@@ -93,7 +91,6 @@ class BookType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Book::class,
-//            'entity_manager' => null,
             'tags' => [],
         ]);
     }
