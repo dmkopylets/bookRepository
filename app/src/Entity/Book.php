@@ -124,8 +124,6 @@ class Book
             $tag->addBook($this);
         }
 
-        $this->entityManager->flush();
-
         return $this;
     }
 
@@ -134,8 +132,6 @@ class Book
         if ($this->tags->removeElement($tag)) {
             $tag->removeBook($this);
         }
-
-        $this->entityManager->flush();
 
         return $this;
     }
