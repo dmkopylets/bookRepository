@@ -6,6 +6,9 @@
  */
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'tom-select/dist/css/tom-select.default.css';
+import 'bootstrap'
+import 'tom-select'
 
 Encore
     .addStyleEntry('css/app', [
@@ -16,3 +19,4 @@ Encore
 // any CSS you import will output into a single css file (app.css in this case)
 
 import './css/app.css';
+import Encore from "@symfony/webpack-encore/lib/WebpackConfig";

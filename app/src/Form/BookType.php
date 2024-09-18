@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Book;
 use App\Entity\Category;
-use App\Entity\Tag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -14,8 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\DataTransformer\TagsToIdsTransformer;
-//use Symfony\Component\Form\FormEvents;
-//use Symfony\Component\Form\FormEvent;
 
 class BookType extends AbstractType
 {
@@ -48,14 +45,14 @@ class BookType extends AbstractType
                 'choice_label' => 'title',
             ])
             ->add('tags', ChoiceType::class, [
-                'choices' => $tagsArray,  // Масив 'Назва' => 'ID'
+                'autocomplete' => true,
+                'choices' => $tagsArray,
                 'label' => 'Select Tags',
 //                'choice_label' => 'title',
                 'multiple' => true,
-                'expanded' => false,  // Виводимо у вигляді select
-                'autocomplete' => true,
+                'expanded' => false,
                 'attr' => [
-                    'class' => 'custom-select-multiple',
+//                    'class' => 'custom-select-multiple',
                     'size' => 6,
                     'style' => 'overflow-y: scroll;',
                 ],

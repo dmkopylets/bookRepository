@@ -25,6 +25,10 @@ Encore
         'node_modules/bootstrap/dist/css/bootstrap.min.css' // Bootstrap CSS
     ])
     .addStyleEntry('css/app', './assets/css/app.css')
+    .addEntry('app', './assets/app.js')
+    .addEntry('vendors', [
+        'bootstrap',
+    ])
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
