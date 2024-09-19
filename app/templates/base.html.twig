@@ -7,8 +7,11 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
 
         {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+            {{ encore_entry_link_tags('vendors') }}
+            {{ encore_entry_link_tags('app') }}
+
+{#            <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">#}
+{#            <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">#}
         {% endblock %}
     </head>
     <body>
@@ -23,8 +26,11 @@
         </main>
 
         {% block javascripts %}
-            <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
-            <script src="{{ asset('assets/js/app.js') }}"></script>
+            {{ encore_entry_script_tags('vendors') }}
+            {{ encore_entry_script_tags('app') }}
+
+{#            <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>#}
+{#            <script src="{{ asset('assets/js/app.js') }}"></script>#}
         {% endblock %}
     </body>
 </html>
