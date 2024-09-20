@@ -52,14 +52,21 @@ class BookController extends AbstractController
     #[Route('/new', name: 'app_book_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $tags = $entityManager->getRepository(Tag::class)->findAll();
         $book = new Book($entityManager);
-        $form = $this->createForm(BookType::class, $book);
+        $form = $this->createForm(BookType::class, $book, [ 'tags' => $tags, ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $tags = $form->get('tags')->getData();
-            foreach ($tags as $tag) {
-                $book->addTag($tag);
+            foreach ($book->getTags() as $existingTag) {
+                $book->removeTag($existingTag);
+            }
+            $selectedTagIds = $form->get('tags')->getData();
+            foreach ($selectedTagIds as $tagId) {
+                $tag = $entityManager->getRepository(Tag::class)->find($tagId);
+                if ($tag) {
+                    $book->addTag($tag);
+                }
             }
             $entityManager->persist($book);
             $entityManager->flush();
@@ -84,11 +91,14 @@ class BookController extends AbstractController
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(BookType::class, $book);
+        $tags = $entityManager->getRepository(Tag::class)->findAll();
+        $form = $this->createForm(BookType::class, $book, [ 'tags' => $tags, ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $book->getTags()->clear();
+            foreach ($book->getTags() as $existingTag) {
+                $book->removeTag($existingTag);
+            }
 
             $selectedTagIds = $form->get('tags')->getData();
             foreach ($selectedTagIds as $tagId) {
