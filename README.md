@@ -13,6 +13,10 @@ cd app
 
 composer update
 
+npm install
+
+php bin/console doctrine:migrations:migrate
+
 exit 
 
 **to start the test task program, use:**
