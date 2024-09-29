@@ -209,6 +209,9 @@
             "config/routes/ux_autocomplete.yaml"
         ]
     },
+    "symfony/ux-turbo": {
+        "version": "v2.20.0"
+    },
     "symfony/validator": {
         "version": "7.1",
         "recipe": {

@@ -56,6 +56,7 @@ class BookType extends AbstractType
                     'size' => 6,
                     'style' => 'overflow-y: scroll;',
                 ],
+                'required' => false,
             ]);
         $builder->get('tags')->addModelTransformer(new TagsToIdsTransformer($this->entityManager));
 

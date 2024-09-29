@@ -12,7 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/tag')]
-final class TagController extends AbstractController{
+final class TagController extends AbstractController
+{
     #[Route(name: 'app_tag_index', methods: ['GET'])]
     public function index(TagRepository $tagRepository): Response
     {
